@@ -23,7 +23,7 @@ class home_market extends module
     function __construct()
     {
         $this->name = "home_market";
-        $this->title = "Личный маркет дополнений";
+        $this->title = "Свой маркет";
         $this->module_category = "<#LANG_SECTION_SYSTEM#>";
         $this->checkInstalled();
     }
