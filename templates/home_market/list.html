@@ -1,0 +1,103 @@
+[#if PLUGINS#]
+<div class="market-plugin-list" id="market_application">
+    [#begin PLUGINS#]
+    <article class="market-plugin-card">
+        [#if EXISTS#]
+        <a class="market-plugin-card__icon-link" href="<#ROOTHTML#>panel/home_market.html?op=details&plugin=[#MODULE_NAME#]">
+            <img src="https://connect.majordomohome.com/cms/addons/[#ID#]_icon.png" alt="[#TITLE#]" data-market-fallback-src="<#ROOTHTML#>img/modules/default.png">
+        </a>
+        [#else#]
+        <span class="market-plugin-card__icon-placeholder">
+            <img src="https://connect.majordomohome.com/cms/addons/[#ID#]_icon.png" alt="[#TITLE#]" data-market-fallback-src="<#ROOTHTML#>img/modules/default.png">
+        </span>
+        [#endif#]
+        <div class="market-plugin-card__content">
+            <div class="market-plugin-card__header">
+                [#if AUTHOR!=""#]
+                <div class="market-plugin-card__author">
+                    [#if AUTHOR_URL!=""#]<a href="[#AUTHOR_URL#]" target="_blank">[#endif#][#AUTHOR#][#if AUTHOR_URL!=""#]</a>[#endif#]
+                </div>
+                [#endif#]
+                [#if EXISTS#]
+                <span class="market-plugin-card__badge"><#LANG_MARKET_CATEGORY_INSTALLED#></span>
+                [#endif EXISTS#]
+                <span class="market-plugin-card__repo-badge [#SOURCE_CLASS#]" title="[#SOURCE_LABEL#]">[#SOURCE_LABEL#]</span>
+                [#if SUPPORT_URL!=""#]<a class="market-plugin-card__discuss-badge" target="_blank" href="[#SUPPORT_URL#]"><i class="glyphicon glyphicon-bullhorn"></i> <#LANG_NEWMARKET_MODULE_DISCUSS#></a>[#endif#]
+            </div>
+            <h3 class="market-plugin-card__title" id="row[#ID#]_title">
+                [#if URL!=""#]<a href="[#URL#]" target="_blank">[#endif#][#TITLE#][#if URL!=""#]</a>[#endif#]
+            </h3>
+            [#if "<#SETTINGS_SITE_LANGUAGE#>"=="ru"#]
+                [#if DESCRIPTION_RU!=""#]
+                <div class="market-plugin-card__description" id="row[#ID#]_description">[#DESCRIPTION_RU#]</div>
+                [#endif#]
+            [#else#]
+                [#if DESCRIPTION_EN!=""#]
+                <div class="market-plugin-card__description" id="row[#ID#]_description">[#DESCRIPTION_EN#]</div>
+                [#else#]
+                    [#if DESCRIPTION_RU!=""#]
+                    <div class="market-plugin-card__description" id="row[#ID#]_description">[#DESCRIPTION_RU#]</div>
+                    [#endif#]
+                [#endif#]
+            [#endif#]
+            [#if LATEST_VERSION!=""#]
+            <div class="market-plugin-card__meta">
+                <span class="market-plugin-card__meta-label"><#LANG_LATEST_UPDATES#></span>
+                <span class="market-plugin-card__meta-main">
+                    [#if LATEST_VERSION_URL!=""#]<a href="[#LATEST_VERSION_URL#]" target="_blank">[#LATEST_VERSION#]</a>[#else#][#LATEST_VERSION#][#endif#]
+                </span>
+                [#if LATEST_VERSION_COMMENT!=""#]
+                <span class="market-plugin-card__meta-note">[#LATEST_VERSION_COMMENT#]</span>
+                [#endif#]
+            </div>
+            [#endif#]
+        </div>
+        <div class="market-plugin-card__actions-shell">
+            <div class="market-plugin-card__primary-actions">
+                [#if SYSTEM_MODULE!="1"#]
+                <a
+                    class="btn btn-default market-plugin-card__link-btn [#if CUSTOM_REPOSITORY_ACTIVE="1"#]is-active-repo[#endif#]"
+                    href="#"
+                    data-market-action="custom-repo"
+                    data-module-name="[#MODULE_NAME#]"
+                    data-current-url="[#CUSTOM_REPOSITORY_URL_BASE64#]"
+                    title="[#if CUSTOM_REPOSITORY_ACTIVE="1"#]Используется пользовательский Git/архив URL[#else#]Указать свой Git/архив URL[#endif#]"
+                ><i class="glyphicon glyphicon-link"></i> [#if CUSTOM_REPOSITORY_ACTIVE="1"#]Свой GIT подключен[#else#]Свой GIT[#endif#]</a>
+                [#endif#]
+                [#if CUSTOM_REPOSITORY_ACTIVE="1" OR CAN_DOWNLOAD="1"#]
+                [#if EXISTS#]
+                <a class="btn btn-success market-plugin-card__main-btn" href="<#ROOTHTML#>panel/home_market.html?mode=iframe&mode2=install&name=[#MODULE_NAME_ENCODED#]&url=[#REPOSITORY_URL_ENCODED#]&version=[#LATEST_VERSION_ENCODED#]"><i class="glyphicon glyphicon-refresh"></i> <#LANG_UPDATE#></a>
+                [#else#]
+                <a class="btn btn-primary market-plugin-card__main-btn" href="<#ROOTHTML#>panel/home_market.html?mode=iframe&mode2=install&name=[#MODULE_NAME_ENCODED#]&url=[#REPOSITORY_URL_ENCODED#]&version=[#LATEST_VERSION_ENCODED#]"><i class="glyphicon glyphicon-download"></i> <#LANG_ADD#></a>
+                [#endif#]
+                [#else#]
+                [#if PRICE!=""#]
+                <a class="btn btn-info market-plugin-card__main-btn" href="[#URL#]" target="_blank"><i class="glyphicon glyphicon-usd"></i> <#LANG_NEWMARKET_BUY_FOR#> [#PRICE#]</a>
+                [#endif#]
+                [#endif#]
+            </div>
+            <details class="market-plugin-card__menu">
+                <summary class="btn btn-default market-plugin-card__menu-summary">Ещё <span class="caret"></span></summary>
+                <div class="market-plugin-card__menu-dropdown">
+                    [#if SOURCE_URL!=""#]
+                    <a href="[#SOURCE_URL#]" target="_blank" class="market-plugin-card__menu-item"><i class="glyphicon glyphicon-globe"></i> [#if "<#SETTINGS_SITE_LANGUAGE#>"=="ru"#]Источник[#else#]Source[#endif#]</a>
+                    [#endif#]
+                    <a href="<#ROOTHTML#>panel/home_market.html?op=details&plugin=[#MODULE_NAME#]" class="market-plugin-card__menu-item"><i class="glyphicon glyphicon-info-sign"></i> <#LANG_HISTORY#></a>
+                    [#if EXISTS#]
+                    <a href="<#ROOTHTML#>modules/home_market/export.php?name=[#MODULE_NAME_ENCODED#]" class="market-plugin-card__menu-item"><i class="glyphicon glyphicon-save"></i> [#if "<#SETTINGS_SITE_LANGUAGE#>"=="ru"#]Экспорт[#else#]Export[#endif#]</a>
+                    [#endif#]
+                    [#if EXISTS#]
+                    [#if SYSTEM_MODULE!="1"#]
+                    <a class="market-plugin-card__menu-item is-danger" href="<#ROOTHTML#>panel/home_market.html?mode=iframe&mode2=uninstall&name=[#MODULE_NAME#]" data-confirm="<#LANG_ARE_YOU_SURE#>"><i class="glyphicon glyphicon-trash"></i> <#LANG_DELETE#></a>
+                    [#endif#]
+                    [#endif#]
+                </div>
+            </details>
+        </div>
+    </article>
+    [#end PLUGINS#]
+</div>
+[#else PLUGINS#]
+<div class="market-plugin-empty"><#LANG_NO_RECORDS_FOUND#></div>
+[#endif PLUGINS#]
+

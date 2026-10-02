@@ -1,9 +1,163 @@
+<link rel="stylesheet" href="<#ROOTHTML#>templates/home_market/home_market.css?v=2026-10-02-hm1" type="text/css">
+<script src="<#ROOTHTML#>templates/home_market/home_market.js?v=2026-10-02-hm1"></script>
+<div
+    data-market-config
+    data-roothtml="<#ROOTHTML#>"
+    data-loading-text="<#LANG_NEWDASH_LOADING#>"
+    data-search-label="Поиск"
+    data-search-close-label="Закрыть поиск"
+    data-install-prompt="Укажите Git/архив URL для установки.\nGitHub repo/tree/commit будет преобразован в архив master/branch/commit.\nПустое значение сбросит пользовательский URL."
+    data-list-load-error="Не удалось загрузить список расширений."
+></div>
 
-[#if ACTION=""#]
-<!-- Frontend -->
- [#inc action_usual.html#]
-[#endif#]
-[#if ACTION="admin"#]
-<!-- Control Panel -->
- [#inc action_admin.html#]
-[#endif#]
+[#if MODE=""#]
+<div class="market-page" id="marketPage">
+    <div class="market-toolbar-grid">
+        <section class="market-hero">
+            <div class="market-hero__eyebrow"><i class="glyphicon glyphicon-th-large"></i> MajorDoMo Market</div>
+            <h1 class="market-hero__title"><#LANG_NEWMARKET_BANNER#></h1>
+            <p class="market-hero__text"><#LANG_NEWMARKET_BANNER_TEXT#></p>
+            <div class="market-hero__meta">
+                <span>Каталог совместимых модулей и ручная установка из архива или Git-репозитория.</span>
+                <a href="https://mjdm.ru/forum/viewforum.php?f=36" target="_blank" class="market-hero__link"><i class="glyphicon glyphicon-comment"></i> <#LANG_NEWMARKET_BANNER_BTN#></a>
+            </div>
+        </section>
+        <section class="market-card" aria-labelledby="marketSearchHeading">
+            <h2 class="market-card__title" id="marketSearchHeading"><#LANG_NEWMARKET_SERACH_BLOCK#></h2>
+            <p class="market-card__subtitle">Поиск по доступным модулям, установка архивов и подключение собственных Git/архив URL для обновлений.</p>
+            <div class="market-search" id="marketSearchBox">
+                <i class="glyphicon glyphicon-search market-search__icon"></i>
+                <i class="glyphicon glyphicon-refresh market-search__spinner"></i>
+                <input type="text" class="form-control" placeholder="<#LANG_NEWMARKET_SEARCH_INPUT_PLACEHOLDER#>" id="filter" autocomplete="off" autofocus>
+            </div>
+            <div class="market-actions">
+                [#if CLEAR_FIRST!="1"#]
+                <button type="button" class="btn btn-primary market-actions__primary" data-market-action="toggle-upload"><i class="glyphicon glyphicon-plus"></i> <#LANG_ADD_UPDATE_MANUALLY#></button>
+                <details class="market-actions-menu">
+                    <summary class="btn btn-default market-actions-menu__summary"><i class="glyphicon glyphicon-cog"></i> Действия <span class="caret"></span></summary>
+                    <div class="market-actions-menu__dropdown">
+                        <a href="?mode=iframe&mode2=update_new" data-confirm="<#LANG_ARE_YOU_SURE#>" class="market-actions-menu__item">
+                            <i class="glyphicon glyphicon-download-alt"></i>
+                            <span><#LANG_UPDATE_NEW_EXTENSIONS#></span>
+                        </a>
+                        <a href="?mode=iframe&mode2=update_all" data-confirm="<#LANG_ARE_YOU_SURE#>" class="market-actions-menu__item">
+                            <i class="glyphicon glyphicon-repeat"></i>
+                            <span><#LANG_UPDATE_ALL_EXTENSIONS#></span>
+                        </a>
+                    </div>
+                </details>
+                [#else CLEAR_FIRST#]
+                <form action="?" method="post">
+                    <input type="hidden" name="mode" value="clear">
+                    <button type="submit" class="btn btn-warning"><i class="glyphicon glyphicon-folder-open"></i> <#LANG_CLEAR_TEMPORARY_FOLDER#></button>
+                </form>
+                [#endif CLEAR_FIRST#]
+            </div>
+            [#if CLEAR_FIRST!="1"#]
+            <div class="market-manual-upload" id="marketManualUpload">
+                <div class="market-manual-upload__intro">
+                    <div>
+                        <h3 class="market-manual-upload__title"><#LANG_ADD_UPDATE_MANUALLY#></h3>
+                        <p class="market-manual-upload__subtitle">Выберите локальный архив или укажите ссылку на Git/архив. Перед установкой пакет проверяется на структуру MajorDoMo-модуля.</p>
+                    </div>
+                </div>
+                <div class="market-manual-upload__grid">
+                    <div class="market-manual-upload__panel">
+                        <h3>Локальный архив</h3>
+                        <p>Поддерживается архив с пакетом MajorDoMo. Перед установкой проверяется наличие структуры `modules/&lt;module&gt;/&lt;module&gt;.class.php`.</p>
+                        <form class="form" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="module_file"><#LANG_ADDON_FILE#> (.tgz, .tar.gz)</label>
+                                <input type="file" name="file" id="module_file" class="form-control">
+                            </div>
+                            <input type="hidden" name="mode" value="upload">
+                            <button type="submit" class="btn btn-primary"><#LANG_UPLOAD_AND_INSTALL#></button>
+                        </form>
+                    </div>
+                    <div class="market-manual-upload__panel">
+                        <h3>Git / архив URL</h3>
+                        <p>Поддерживаются GitHub repo/tree/commit/tag и прямой `.tar.gz`. Ссылка будет сохранена как источник обновлений модуля после успешной проверки пакета.</p>
+                        <form class="form" method="get">
+                            <div class="form-group">
+                                <label for="module_repo_url">Ссылка на Git или архив</label>
+                                <input type="url" name="repo_url" id="module_repo_url" class="form-control" placeholder="https://github.com/user/repo/tree/main" required>
+                            </div>
+                            <input type="hidden" name="mode" value="iframe">
+                            <input type="hidden" name="mode2" value="install_repository">
+                            <button type="submit" class="btn btn-primary">Скачать и установить</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="market-manual-upload__footer">После успешной установки Git/архив URL сохраняется в настройках модуля и используется для последующих обновлений.</div>
+            </div>
+            [#endif CLEAR_FIRST#]
+        </section>
+    </div>
+    [#if ERR_MSG!=""#]
+    <div class="alert alert-danger">[#ERR_MSG#]</div>
+    [#endif ERR_MSG#]
+
+    [#if OK_MSG!=""#]
+    <div class="alert alert-success">[#OK_MSG#]</div>
+    [#endif OK_MSG#]
+
+    [#if CATEGORIES#]
+    <div id="tab" class="md-admin-module-tabs market-page__tabs" aria-label="Market categories">
+        [#begin CATEGORIES#]
+        <a href="#panel_[#ID#]" id="panel_[#ID#]" class="md-admin-module-tabs__link" data-category-id="[#ID#]">[#TITLE#]</a>
+        [#end CATEGORIES#]
+    </div>
+    <div class="alert alert-warning market-connect-error" id="problemLinkToConnect">Не удалось корректно получить данные маркета. Проверьте соединение с `connect.majordomohome.com` или повторите позже.</div>
+    <div class="market-results" id="marketCatalogSection">
+        <div id="search_result"></div>
+    </div>
+    [#endif CATEGORIES#]
+</div>
+[#endif MODE#]
+
+[#if MODE="iframe"#]
+<div class="md-market-update-modal" data-market-update-modal>
+    <div class="md-market-update-modal__backdrop"></div>
+    <div class="md-market-update-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="marketInstallTitle">
+        <div class="md-market-update-modal__header">
+            <div>
+                <div class="md-market-update-modal__eyebrow">Market</div>
+                <h2 class="md-market-update-modal__title" id="marketInstallTitle">Установка и обновление модуля</h2>
+            </div>
+        </div>
+        <div class="md-market-update-modal__body">
+            <div class="md-market-update-status">
+                <div class="md-market-update-status__main">
+                    <span id="marketInstallStatusIcon" class="md-market-update-status__icon"></span>
+                    <div>
+                        <div class="md-market-update-status__label">Статус</div>
+                        <div id="marketInstallStatusText" class="md-market-update-status__text">Подготовка операции...</div>
+                    </div>
+                </div>
+                <div class="md-market-progress" id="marketInstallProgress">
+                    <span class="md-market-progress__bar" style="width: 15%"></span>
+                </div>
+            </div>
+
+            <div class="md-market-steps">
+                <span id="marketInstallStep_prepare" class="md-market-step is-active" data-order="1">1. Подготовка</span>
+                <span id="marketInstallStep_download" class="md-market-step" data-order="2">2. Загрузка</span>
+                <span id="marketInstallStep_apply" class="md-market-step" data-order="3">3. Установка</span>
+                <span id="marketInstallStep_cleanup" class="md-market-step" data-order="4">4. Очистка</span>
+                <span id="marketInstallStep_finish" class="md-market-step" data-order="5">5. Завершение</span>
+            </div>
+
+            <div class="md-market-inline-alert">
+                <i class="glyphicon glyphicon-info-sign"></i>
+                <span>Не закрывайте это окно до окончания операции. После успешной установки страница обновится автоматически.</span>
+            </div>
+
+            <iframe id="processUpdateFrame" class="md-market-console" src="<#ROOTHTML#>modules/home_market/update_iframe.php?mode2=<#MODE2#>&name=[#NAME#]&names=[#NAMES#]&link=[#LINK_URL#]&url=[#INSTALL_URL#]&repo_url=[#REPO_URL#]&version=[#VERSION_URL#]" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+[#endif MODE#]
+
+[#if MODE="details"#]
+[#inc details.html#]
+[#endif MODE#]
